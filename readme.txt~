@@ -1,0 +1,19 @@
+
+@article{Buck1991,
+abstract = {The mammalian olfactory system can recognize and discriminate a large number of different odorant molecules. The detection of chemically distinct odorants presumably results from the association of odorous ligands with specific receptors on olfactory sensory neurons. To address the problem of olfactory perception at a molecular level, we have cloned and characterized 18 different members of an extremely large multigene family that encodes seven transmembrane domain proteins whose expression is restricted to the olfactory epithelium. The members of this novel gene family are likely to encode a diverse family of odorant receptors.},
+annote = {SOURCE FOR: multi-gene family that encodes odorant receptors
+},
+author = {Buck, L and Axel, R},
+file = {:C$\backslash$:/MyDocuments/2014\_01\_spring/olfaction/papers/Cell\_1991\_axel\_buck.pdf:pdf},
+issn = {0092-8674},
+journal = {Cell},
+keywords = {Amino Acid Sequence,Animals,Base Sequence,Biological Evolution,Blotting, Northern,Blotting, Southern,Cloning, Molecular,DNA,Gene Expression,Membrane Proteins,Membrane Proteins: genetics,Membrane Proteins: physiology,Molecular Sequence Data,Multigene Family,Olfactory Pathways,Organ Specificity,Organ Specificity: genetics,Polymerase Chain Reaction,Protein Conformation,Rats,Rats, Inbred Strains,Sensory Receptor Cells,Sensory Receptor Cells: physiology,Smell,Smell: genetics},
+month = apr,
+number = {1},
+pages = {175--87},
+pmid = {1840504},
+title = {{A novel multigene family may encode odorant receptors: a molecular basis for odor recognition.}},
+url = {http://www.ncbi.nlm.nih.gov/pubmed/1840504},
+volume = {65},
+year = {1991}
+}

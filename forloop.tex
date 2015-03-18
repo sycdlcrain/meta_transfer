@@ -1,0 +1,22 @@
+\section{ Happy Cat is in P}
+
+The primary insight to this problem is that there are only $n^2$ possible configurations.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[auto]
+		
+		
+\foreach \x [count=\xi] in {1,...,10} {%
+  \ifnum\xi=1
+    $b_1$%
+  \else
+    $,b_{\xi}$%
+  \fi
+}
+%	\node[circle,draw,thick] (a0) at (0, 4) {$n_0$};
+
+\end{tikzpicture}
+\caption{3-color graph}
+\label{fig:Union}
+\end{figure}

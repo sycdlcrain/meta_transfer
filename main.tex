@@ -1,0 +1,290 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips14submit_e,times}
+\usepackage{hyperref}
+\usepackage{url}
+
+% use Times
+\usepackage{times}
+% For figures
+\usepackage{graphicx} 
+\usepackage{subfigure} 
+\usepackage{tikz}
+% For citations
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+ %\setcitestyle{authoryear,open={((},close={))}}
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+
+% for math 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+%\usepackage{breqn}
+
+%\usepackage[english]{babel}
+%\usepackage[latin9]{inputenc}
+%\usepackage[letterpaper]{geometry}
+%\usepackage{array}
+%\usepackage{color}
+%\usepackage{enumerate}
+%\usepackage{float}
+%\usepackage{graphics}
+%\usepackage{ifthen}
+%\usepackage{latexsym}
+%\usepackage{multicol}
+%\usepackage{rotating}
+%\usepackage{textcomp}
+%\usepackage{txfonts}
+%\usepackage{verbatim}
+%\usepackage{wrapfig}
+
+\newcommand{\Tt}[1]{T^{(#1)}}
+\newcommand{\Mt}[1]{\textbf{m}^{(#1)}}
+\newcommand{\Dt}[1]{D^{(#1)}}
+\newcommand{\st}[1]{\textbf{s}^{(#1)}}
+\newcommand{\sthat}[1]{\hat{\textbf{s}}^{(#1)}}
+\newcommand{\Th}[1]{\Theta^{(#1)}}
+\newcommand{\xit}[2]{\textbf{x}_{#1}^{(#2)}}
+\newcommand{\yit}[2]{\textbf{y}_{#1}^{(#2)}}
+\newcommand{\pairsim}[1]{d(#1)}
+\newcommand{\learned}[1]{h\Big( \pairsim{#1},\phi \Big)} %\tilde{p(#1)}
+\newcommand{\pairset}[1]{\bm{D}_{#1}}
+\newcommand{\learnedset}[1]{\bm{D}_{#1}'}
+\newcommand{\reveng}[1]{R(#1)}
+\newcommand{\argmin}{\arg\!\min}
+ 
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+
+\title{Using task features to Learn Sparse Representations for Zero-shot Transfer in Lifelong Learning}
+
+
+\author{
+David Isele
+Department of Computer Science\\
+University of Pennsylvania\\
+Philadelphia, PA 19104 \\
+\texttt{isele@seas.upenn.edu} \\
+\And
+Eric Eaton
+Department of Computer Science\\
+University of Pennsylvania\\
+Philadelphia, PA 19104 \\
+\texttt{eeaton@cis.upenn.edu} \\
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+Using task features to Learn Sparse Representations for Zero-shot Transfer in Lifelong Learning. The title is practically a paragraph by itself, gross!
+\end{abstract}
+
+
+
+\section{Introduction}
+In multi-task learning, tasks are often accompanied by metadata. Metadata can be thought of as the description that identifies that task.
+
+As an example take the Landmine dataset. In the Landmine dataset the goal is to correctly classify a region as having or not having a landmine based on various sensor readings. This dataset is separated into tasks corresponding to different geographic regions. Metadata, in this instance,  could take the form of geographic information that identifies that tasks. 
+
+Consider a second example of motion classification. Given the accelerometer readings at different locations on a person's body, determine the specific action a person was performing (i.e. running, jumping, sitting). This data is separated by individuals performing the experiment where each individual can be treated as a different task. This dataset might have height, weight, age, and gender information that could be used as metadata.
+
+Since this data specifically describes the distinction between tasks we would expect that this information would correlate with the differences in data distributions across tasks. We would like to use this metadata to predict models for new tasks without having to see any data or labels. 
+% relate to zero shot learning, differences in distribution but not informative about class -> a tall person could run or jump
+
+
+
+\section{Setup}
+Let there be a set of tasks $\bm{T} =\{ \Tt{1} ,\Tt{2} ,\Tt{3}, \dots, \Tt{\tau}    \}$ \\
+Each task consists of a $n_t$ pairs $\{\xit{i}{t},\yit{i}{t}\}$ for $i={1 \dots n}$ where $\xit{i}{t}$ is input sample of dimension $r$ and $\yit{i}{t}$ is the target output. In order to be precise we let $\xit{i}{t} \in \mathbb{R}^r$ and also let $\yit{i}{t}$ be real valued, although the analysis should extend to binary inputs and classification tasks.\\ %and $\yit{i}{t} \in \mathbb{R}^r$
+Each task has a corresponding metadata feature vector $\bm{M} =\{ \Mt{1} ,\Mt{2} ,\Mt{3}, \dots, \Mt{\tau}    \}$ \\
+where the metadeta is dimension $l$. We similarly let $\Mt{t} \in \mathbb{R}^l$\\ Although these might be higher level features that need to be encoded in some other way. Note that while metadata could be viewed as additional input, it is consistent across a task, and therefore could not be used increase single task performance.
+The loss on a specific Task $\Tt{t}$ is 
+\begin{eqnarray}
+	\frac{1}{n_t} \sum_{i=1}^{n_t} \mathcal{L}  \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big)
+\end{eqnarray}
+where $\Th{t}$ is the parameters for function $f$, and $f$ is a function that maps $\xit{i}{t}$ to $\yit{i}{t}$.
+
+
+\subsection{ELLA framework}
+Each task is classified by a sparse linear conbination $s$ of a knowledge repository $L$.
+\begin{eqnarray}
+	L\st{t} = \Th{t} 
+\end{eqnarray}
+
+We denote the set of all sparse task vectors  $S =\{ \st{1} ,\st{2} ,\st{3}, \dots, \st{\tau}    \}$ \\
+
+
+
+\section{Goal}
+Given a new task $\Tt{\tau+1}$ with unknown sparse representation $\st{\tau+1}$, use the metadata $\Mt{\tau+1}$ to estimate the unknown $\st{\tau+1}$. This is expressed as the objective function 
+
+\begin{gather} 
+	argmin_{\omega} \sum_{t=1}^{\tau} \big( g(\Mt{t}, \omega) - \st{t}  \big)^2 
+\end{gather}
+
+If we assume that $\st{i}$ can be represented as a linear function of $\Mt{i}$ directly, we get
+\begin{gather} \label{eq:linear}
+	argmin_{W} \sum_{t=1}^{\tau} \big( \Mt{t}W - \st{t}  \big)^2 
+\end{gather}
+
+Where $W$ is an $l \times r$ weight matrix.
+
+
+\section{Similarity and Reconstruction}
+
+\subsection{Simililarity Measure}
+In the event that a direct mapping isn't expressive enough, we propose a model based on pairwise similarities. Here we relax the notion that metadata can describe the sparse representation and instead ask that the relation between metadata vectors can be mapped to the relationship between sparse representations.
+
+Let there be a pairwise similarity measure between sparse representations $\pairsim{\st{i},\st{j}}$. \\
+The objective function for a mapping $h$ is 
+%	\begin{eqnarray*}
+%		  argmin_{\phi} \sum_{i,j} \big( \learned{\Mt{i},\Mt{j},\phi } - \pairsim{\st{i},\st{j} } \big)^2 \\
+%	\end{eqnarray*}
+%	where $\phi$ are the parameters of the learned function $\learned{}$
+%	
+%	\textbf{Alternate formulation:}
+%
+%$\learned{}$ can be thought of as the similarity of $\Mt{i}$ and the mapping from $\pairsim{\Mt{i},\Mt{j}}$ to $\pairsim{\st{i},\st{j}}$
+\begin{eqnarray}
+	  argmin_{\phi} \sum_{i,j} \bigg( \learned{\Mt{i},\Mt{j}} - \pairsim{\st{i},\st{j} } \bigg)^2 
+\end{eqnarray}
+For clarity, we make the assumption that the same similarity measure $\pairsim{}$ is used for both metadata and sparse representations, although this need not be the case. Note that if we believe the similarity function can be learned, then the direct mapping in equation \ref{eq:linear} or some non-linear alternative seems sufficient.
+
+\subsection{examples of pairwise similarity measures}
+Example similarity measures include the Pearson correlation coefficient, extended Jaccard coefficient, and the cosine similarity. Most distance measures can also be easily modified into similarity measures for example the Hamming similarity is the count of the elements in common as opposed to the Hamming distance which is the count of the elements that are different. We use the cosine similarity measure as an example as it is particularly well suited to sparse vectors.  
+\subsubsection{cosine similarity example} \label{cosine}
+Defining our pairwise similarity as the cosine similarity we get:
+\begin{eqnarray}
+	\pairsim{\st{i},\st{j}} = \frac{  \st{i} \cdot \st{j}  } {  \|\st{i} \| \cdot \|\st{j}\|  }
+\end{eqnarray}
+
+Using sample vectors:
+\begin{align*}
+\st{1} &= [&.2&	&.4& 	&0&	&0&	&.1& 	&0& &-.2& ]&&&&&&&&&&&&&&&&&&\\
+\st{2} &= [&0&	&.2&	&.1&	&0&	&.1& 	&0& &.1& ] &&&&&&&&&&&&&&&&&&\\
+\st{3} &= [&.2&	&.2& 	&.1&	&0&	&0&	&0&   &0& ]&&&&&&&&&&&&&&&&&&\\
+\end{align*}
+
+we get the following similarity scores 
+\begin{eqnarray*}
+\pairsim{\st{1},\st{2}} &= .53\\
+\pairsim{\st{2},\st{3}} &= .63\\
+\pairsim{\st{1},\st{3}} &= .8\\
+\end{eqnarray*}
+
+
+\subsection{Reconstruction}
+Given an appropriate $\pairsim{}$ and $h{}$ we can find a $\pairsim{\st{i},\st{j} }$ from $\Mt{i}$, but we don't have $\st{i}$ yet. We need to somehow use all the $\pairsim{\st{i},\st{j}} $ to reconstruct the $\st{i}$. To accomplish this we use a function $\reveng{}$ 
+\begin{eqnarray*}
+	\pairset{\st{i}} &=& \{ \pairsim{\st{i},\st{1} } , \pairsim{\st{i},\st{2} } , \pairsim{\st{i},\st{3} } , \dots , \pairsim{\st{i},\st{\tau} } \} \\
+	  \sthat{i} &=& \reveng{ \pairset{\st{i}}, S  } \\
+\end{eqnarray*}
+with the goal that $\sthat{\tau+1} \approx \st{\tau+1}$ 
+
+Given a function $\reveng{}$ we can then use our map $h$ to find $\st{i}$
+\begin{eqnarray*}
+	\pairsim{  \st{i},\st{j}  }  &\approx&    \learned{  \Mt{i},\Mt{j}  }    \\
+	\learnedset{\st{i}} &=& \bigg\{ \learned{  \Mt{i},\Mt{1}  } ,  \learned{  \Mt{i},\Mt{2}  } , \learned{  \Mt{i},\Mt{3}  } , \dots ,  \learned{  \Mt{i},\Mt{\tau}  }  \bigg\} \\
+	\sthat{i} &=& \reveng{ \learnedset{  \st{i}  }, S  } \\
+\end{eqnarray*}
+
+We can make $\reveng{}$'s dependence on $\Mt{i}$ and $\phi$ more explicit by rewriting the last equation 
+\begin{eqnarray*} 
+	\sthat{i} &=& \reveng{ \Mt{i}, \phi,  S  } 
+\end{eqnarray*}
+
+\subsection{Reconstruction Example}
+When using cosine similarity, one possible choice for $\reveng{  }$ is the average of $\st{j}$ weighted by the cosine similarity.
+\begin{eqnarray}
+	\reveng{ \pairset{\st{i}}, S  }&=& \frac{\sum_{j=1}^{\tau} \pairsim{\st{i},\st{j}}\st{j}}   {\sum_{j=1}^{\tau} \pairsim{\st{i},\st{j} }}
+\end{eqnarray}
+We again consider the sample vectors and cosine similarity from \ref{cosine}. Suppose we want to reconstruct $\st{3}$ using only $\st{1}$ and $\st{2}$. 
+\begin{eqnarray*}
+	\reveng{ \pairset{\st{3}}, S  }&=&  \frac{  \pairsim{\st{3},\st{1}} \st{1} + \pairsim{\st{3},\st{2}} \st{2}   } { \pairsim{\st{3},\st{1}} +  \pairsim{\st{3},\st{2}}} \\
+\end{eqnarray*}
+\begin{align*}
+	\sthat{3} &= [&.11& &.31& &.04& &0& &.1& &0& &-.07& ]&&&&&&&&&&&&&&&&&&\\
+	\st{3} &= [&.2&	&.2& 	&.1&	&0&	&0&	&0&   &0& ]&&&&&&&&&&&&&&&&&&\\
+\end{align*}
+This however doesn't enforce sparsity in $\sthat{3}$. One possible fix is to take the average number $z$ of non-zero elements in $S$ and limit $\st{3} $ to have at most $z$ elements by zeroing out the smallest elements until $\st{3} $ has at most $z$ non-zero parts. This is hacky, Is there a better way?
+
+
+\subsection{Similarity and Reconstruction Objective Function}
+\begin{gather}
+	argmin_{\phi} \sum_{t=1}^{\tau} \big( \reveng{ \Mt{i}, \phi,  S  }- \st{t}  \big)^2 
+\end{gather}
+This is incorporated into the lifelong learning framework to ensure that the $L$ and $\st{i}$ are selected in a way where $\Mt{i}$ can describe (is correlated with) $\st{i}$.
+
+%\begin{eqnarray*}
+%	\argmin_{L} \frac{1}{\tau} \sum_{t=1}^\tau
+%	\min_{\st{t}} \bigg(    
+%		 \frac{1}{n_t}  \sum_{i=1}^{n_t}  \mathcal{L} \Big( g\big(\xit{i}{t};L\st{t} \big) ,\yit{i}{t} \Big) 	%task error
+%	\bigg)  	
+%\end{eqnarray*}
+%
+%with constraints to minimize
+%
+%\begin{eqnarray*}
+%	\sum_{t=1}^\tau \bigg(     \mu\|\st{t}\|_1  \bigg)\\  						    	%sparsity
+%	\sum_{t=1}^\tau 	\bigg(   \Big( \reveng{ \learnedset{\st{t}}, S  } - \st{t}  \Big)^2  	\bigg)\\  	    	%meta reconstruction
+%	\lambda\|L\|_F^2   \\
+%\end{eqnarray*}
+
+%But actually the objective function is this:
+
+\begin{multline}
+	\argmin_{L} \frac{1}{\tau} \sum_{t=1}^\tau 
+	\min_{\st{t},\phi} \bigg(    
+		 \underbrace{  \frac{1}{n_t}  \sum_{i=1}^{n_t}  \mathcal{L} \Big( f\big(\xit{i}{t};L\st{t} \big) ,\yit{i}{t} \Big)  }_\text{task error} 
+		+ \underbrace{  \mu\|\st{t}\|_1  }_\text{sparsity} \\
+		+ \underbrace{  \Big(\reveng{ \Mt{i}, \phi,  S  } - \st{t}  \Big)^2  }_\text{metadata reconstruction error}
+		+ \underbrace{  \alpha\|\phi\|_1  }_\text{regularization}
+	\bigg)  	
+	+ \lambda\|L\|_F^2   
+\end{multline}
+
+
+%other version 
+%\begin{eqnarray*}
+%	\argmin_{L} \frac{1}{\tau} \sum_{t=1}^m \min_{\st{t}} \Big(    \frac{1}{n_t}  \| \Th{t} - L\st{t} \|_{\Dt{t}}^2 + \mu\|\st{t}\|_1  
+%	+ \argmin_{\phi} \sum_{i=1}^{\tau} \big( \sthat{i}(\Mt{i},\phi) - \st{i}  \big)^2  \Big)  
+%	+ \lambda\|L\|_F^2   \\
+%\end{eqnarray*}
+%where $ \nabla$
+%\begin{eqnarray*}
+%	\Dt{t} = \frac{1}{2} \nabla_{\Theta,\Theta}^2 \frac{1}{n_t} \sum_{t=1}^{n_t} \mathcal{L} \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big) \Big|_{\Theta = \Th{t}} \\
+%	\Th{t} = \argmin_\Theta \mathcal{L} \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big) \\
+%\end{eqnarray*}
+%what's the double theta here mean?
+
+
+
+
+citation test: \cite{Ruvolo2013}
+
+
+%{\small
+
+\bibliography{AI_Lifelong_Learning}
+%\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+
+%}
+
+
+\end{document}

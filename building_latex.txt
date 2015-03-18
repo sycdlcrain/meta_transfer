@@ -1,0 +1,12 @@
+make sure paper references the bib like this:
+{\small
+\bibliographystyle{ieee}
+\bibliography{refs}
+}
+
+then in console:
+
+pdflatex main.tex
+bibtex main (no extension, not refs.bib)
+pdflatex main.tex
+pdflatex main.tex

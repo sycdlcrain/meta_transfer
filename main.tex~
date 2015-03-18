@@ -1,0 +1,154 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips14submit_e,times}
+\usepackage{hyperref}
+\usepackage{url}
+
+% use Times
+\usepackage{times}
+% For figures
+\usepackage{graphicx} 
+\usepackage{subfigure} 
+\usepackage{tikz}
+% For citations
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+ %\setcitestyle{authoryear,open={((},close={))}}
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{hyperref}
+
+% for math symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+%\usepackage[english]{babel}
+%\usepackage[latin9]{inputenc}
+%\usepackage[letterpaper]{geometry}
+%\usepackage{array}
+%\usepackage{color}
+%\usepackage{enumerate}
+%\usepackage{float}
+%\usepackage{graphics}
+%\usepackage{ifthen}
+%\usepackage{latexsym}
+%\usepackage{multicol}
+%\usepackage{rotating}
+%\usepackage{textcomp}
+%\usepackage{txfonts}
+%\usepackage{verbatim}
+%\usepackage{wrapfig}
+
+\newcommand{\Tt}[1]{T^{(#1)}}
+\newcommand{\Mt}[1]{M^{(#1)}}
+\newcommand{\Dt}[1]{D^{(#1)}}
+\newcommand{\st}[1]{s^{(#1)}}
+\newcommand{\sthat}[1]{\hat{s}^{(#1)}}
+\newcommand{\Th}[1]{\Theta^{(#1)}}
+\newcommand{\xit}[2]{x_{#1}^{(#2)}}
+\newcommand{\yit}[2]{y_{#1}^{(#2)}}
+\newcommand{\pairsim}[1]{p(#1)}
+\newcommand{\learned}[1]{\tilde{p}(#1)}
+\newcommand{\pairset}[1]{\mathbb{P}_{#1}}
+\newcommand{\reveng}[1]{R(#1)}
+\newcommand{\argmin}{\arg\!\min}
+ 
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+
+\title{Using task features to Learn Sparse Representations for Zero-shot Transfer in Lifelong Learning}
+
+
+\author{
+David Isele
+Department of Computer Science\\
+University of Pennsylvania\\
+Philadelphia, PA 19104 \\
+\texttt{isele@seas.upenn.edu} \\
+\And
+Eric Eaton
+Department of Computer Science\\
+University of Pennsylvania\\
+Philadelphia, PA 19104 \\
+\texttt{eeaton@cis.upenn.edu} \\
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+Using task features to Learn Sparse Representations for Zero-shot Transfer in Lifelong Learning. The title is practically a paragraph by itself, gross!
+\end{abstract}
+
+\section{Setup}
+Let there be a set of tasks $\mathbb{T} =\{ \Tt{1} ,\Tt{2} ,\Tt{3}, \dots, \Tt{m}    \}$ \\
+each with a metadata feature vector $\mathbb{M} =\{ \Mt{1} ,\Mt{2} ,\Mt{3}, \dots, \Mt{m}    \}$ \\
+Each task is classified by a sparse linear conbination $s$ of a knowledge repository $L$ where
+\begin{eqnarray*}
+	\mathcal{L}\st{i} = \Th{i} \\
+\end{eqnarray*}
+Where the loss on a specific Task $\Tt{t}$ is 
+\begin{eqnarray*}
+	\frac{1}{n_t} \sum_{i=1}^{n_t} \mathcal{L}  \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big)\\
+\end{eqnarray*}
+There is pairwise similarity measure between sparse representations $\pairsim{\st{i},\st{j}}$
+The objective function for a learned function $\learned{}$ is 
+\begin{eqnarray*}
+	  argmin_{\learned{}} \sum_{i,j} \big( \learned{\Mt{i},\Mt{j} } - \pairsim{\st{i},\st{j} } \big)^2 \\
+\end{eqnarray*}
+
+
+\section{Problem}
+Given a new task $\Tt{m+1}$ with unknown $\st{m+1}$ use $\Mt{m+1}$ and a learned function $\learned{ }$ where 
+\begin{eqnarray*}
+	  \learned{\Mt{i},\Mt{j} }  \approx \pairsim{\st{i},\st{j} } \\
+\end{eqnarray*}
+reverse engineer $\sthat{m+1} \approx \st{m+1}$ using function $\reveng{}$ where
+\begin{eqnarray*}
+	\pairset{\st{i}} &=& \{ \pairsim{\st{i},\st{1} } , \pairsim{\st{i},\st{2} } , \pairsim{\st{i},\st{3} } , \dots , \pairsim{\st{i},\st{m} } \} \\
+	  \sthat{i} &=& \reveng{ \pairset{\st{i}} } \\
+\end{eqnarray*}
+
+
+\section{Objective Function}
+\begin{eqnarray*}
+	\phi &=& \{  \pairsim{}, \learned{}, \reveng{} \} \\
+	argmin_{\phi} \sum_{i=1}^{m} \big( \sthat{i}(\Mt{i},\phi) - \st{i}  \big)^2 \\
+\end{eqnarray*}
+This is incorporated into the lifelong learning framework to ensure that the $\mathcal{L}$ and $\st{i}$ are selected to such that the $\Mt{i}$ can describe (is correlated with) $\st{i}$.
+
+\begin{eqnarray*}
+	\argmin_{L} \frac{1}{m} \sum_{t=1}^m \min_{\st{t}} \Big(    \frac{1}{n_t}  \| \Th{t} - L\st{t} \|_{\Dt{t}}^2 + \mu\|\st{t}\|_1  
+	+ \argmin_{\phi} \sum_{i=1}^{m} \big( \sthat{i}(\Mt{i},\phi) - \st{i}  \big)^2  \Big)  
+	+ \lambda\|L\|_F^2   \\
+\end{eqnarray*}
+where $ \nabla$
+\begin{eqnarray*}
+	\Dt{t} = \frac{1}{2} \nabla_{\Theta,\Theta}^2 \frac{1}{n_t} \sum_{t=1}^{n_t} \mathcal{L} \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big) \Big|_{\Theta = \Th{t}} \\
+	\Th{t} = \argmin_\Theta \mathcal{L} \big(  f(\xit{i}{t}, \Th{t}) , \yit{i}{t} \big) \\
+\end{eqnarray*}
+what's the double theta here mean?
+
+
+citation test: \cite{rosenblatt1958perceptron}
+
+
+%{\small
+
+\bibliography{AI_Neural_Nets}
+%\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+
+%}
+
+
+\end{document}
