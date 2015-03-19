@@ -6,6 +6,7 @@
 \BOOKMARK [2][-]{subsection.4.1}{Simililarity Measure}{section.4}% 6
 \BOOKMARK [2][-]{subsection.4.2}{examples of pairwise similarity measures}{section.4}% 7
 \BOOKMARK [3][-]{subsubsection.4.2.1}{cosine similarity example}{subsection.4.2}% 8
-\BOOKMARK [2][-]{subsection.4.3}{Reconstruction}{section.4}% 9
-\BOOKMARK [2][-]{subsection.4.4}{Reconstruction Example}{section.4}% 10
-\BOOKMARK [2][-]{subsection.4.5}{Similarity and Reconstruction Objective Function}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{Nystr\366m Extension}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.4}{Reconstruction}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.5}{Reconstruction Example}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.6}{Similarity and Reconstruction Objective Function}{section.4}% 12

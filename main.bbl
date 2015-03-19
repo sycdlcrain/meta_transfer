@@ -1,9 +1,21 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{3}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Fowlkes et~al.(2004)Fowlkes, Belongie, Chung, and
+  Malik]{fowlkes2004spectral}
+C.~Fowlkes, S.~Belongie, F.~Chung, and J.~Malik.
+\newblock Spectral grouping using the nystrom method.
+\newblock \emph{Pattern Analysis and Machine Intelligence, IEEE Transactions
+  on}, 26\penalty0 (2):\penalty0 214--225, 2004.
+
+\bibitem[Nemtsov et~al.(2013)Nemtsov, Averbuch, and Schclar]{nemtsov2013matrix}
+A.~Nemtsov, A.~Averbuch, and A.~Schclar.
+\newblock Matrix compression using the nystro$\backslash$" om method.
+\newblock \emph{arXiv preprint arXiv:1305.0203}, 2013.
 
 \bibitem[Ruvolo and Eaton(2013)]{Ruvolo2013}
 P.~Ruvolo and E.~Eaton.
