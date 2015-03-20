@@ -214,7 +214,7 @@ The Nystr\"om Extension applied to Matrices \cite{fowlkes2004spectral} shows tha
 
 if we construct a matrix of pairwise similarities we could use the Nystr\"om extension to complete most of the similarities. 
 
-Nemtsov also showed that the Nystr\"om extension could be with singular value decomposition on generic $U$x$V$ matrix as long as $W$ has a square root matrix \cite{nemtsov2013matrix}. 
+Nemtsov \cite{nemtsov2013matrix} also showed that the Nystr\"om extension could be applied to the singular value decomposition on a generic $t \times r$ matrix as long as $W$ has a square root matrix . 
 \begin{eqnarray}
 	W = 
 	\begin{bmatrix}
@@ -233,7 +233,8 @@ Nemtsov also showed that the Nystr\"om extension could be with singular value de
 \end{eqnarray}
 
 In which case we could use this reconstruct missing elements of $S$ given we still have some elements already. However we still need to get those elements somehow. 
-ERIC, PLEASE EXPLAIN WHAT YOU HAD IN MIND HERE.  
+
+ERIC, could you explain what you had in mind here? The Nystr\"om method seems like it should be applied to the similarity matrix, so I'm not sure how it'd help us reconstructing the S when we only have the similarities, given a small number.
 
 \subsection{Reconstruction}
 Given an appropriate $\pairsim{}$ and $h{}$ we can find a $\pairsim{\st{i},\st{j} }$ from $\Mt{i}$, but we don't have $\st{i}$ yet. We need to somehow use all the $\pairsim{\st{i},\st{j}} $ to reconstruct the $\st{i}$. To accomplish this we use a function $\reveng{}$ 
